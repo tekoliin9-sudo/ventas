@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7a2e4d">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Punto de venta</title>
+<style>
+:root{--ink:#3a1830;--bg:#fbf1f2;--card:#fff;--rose:#b83a63;--plum:#7a2e4d;--mut:#8a6f80;--line:#efd9de;--ok:#2f7d5b;--bad:#b3261e}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 "Avenir Next","Segoe UI",system-ui,sans-serif;padding:env(safe-area-inset-top) 0 calc(64px + env(safe-area-inset-bottom))}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--plum);color:#fff}
+h1{font-size:19px;margin:0;font-weight:700}
+h2{font-size:16px;margin:18px 0 8px}
+main{padding:12px 14px;max-width:640px;margin:0 auto}
+input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);margin:0 0 8px}
+label{display:block;font-size:13px;color:var(--mut)}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.pri{background:var(--rose);color:#fff;padding:11px 18px;border-radius:10px;font-weight:600}
+.sec{border:1px solid var(--line);background:#fff;padding:9px 14px;border-radius:10px}
+.lnk{color:inherit;text-decoration:underline;font-size:13px}
+.err{color:var(--bad);font-size:14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:7px}
+.row small,.ln small{display:block;color:var(--mut);font-size:13px}
+.pr{font-weight:700;color:var(--plum);white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 10px}
+.cards .card{padding:10px;margin:0}
+.cards small{display:block;color:var(--mut);font-size:12px}
+.cards b{font-size:18px}
+.emp{color:var(--mut);text-align:center;padding:20px 0}
+.ban{background:#fff3d6;border:1px solid #ecd18a;border-radius:10px;padding:8px 12px;margin-bottom:8px;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.bar{display:flex;gap:8px}.bar input{flex:1}
+#cart{position:fixed;left:0;right:0;bottom:calc(56px + env(safe-area-inset-bottom));background:#fff;border-top:2px solid var(--rose);padding:8px 14px;box-shadow:0 -6px 18px rgba(58,24,48,.12)}
+.lines{max-height:26vh;overflow:auto}
+.ln{display:grid;grid-template-columns:1fr auto 70px;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line)}
+.qt{display:flex;align-items:center;gap:8px}
+.qt button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);font-size:18px;line-height:1}
+.lt{text-align:right;font-weight:600}
+.tot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:8px}
+.tot b{font-size:22px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);height:calc(56px + env(safe-area-inset-bottom))}
+nav button{flex:1;font-size:14px;color:var(--mut)}
+nav button.on{color:var(--rose);font-weight:700;box-shadow:inset 0 3px 0 var(--rose)}
+.sale{display:flex;justify-content:space-between;gap:10px}
+.sale p{margin:2px 0;font-size:14px;color:var(--mut)}
+.acts{display:flex;gap:14px;margin-top:6px}
+.acts button{font-size:14px;color:var(--rose)}
+.seg{display:flex;gap:8px;margin-bottom:8px}.seg button{flex:1;padding:9px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.seg button.on{background:var(--plum);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:6px 4px;text-align:right;border-bottom:1px solid var(--line)}
+td:first-child,th:first-child{text-align:left}
+.b2{position:relative;display:flex;justify-content:space-between;padding:7px 10px;margin-bottom:5px;border-radius:8px;background:#f8e4e8;overflow:hidden;font-size:14px}
+.b2 i{position:absolute;left:0;top:0;bottom:0;background:#eab4c3}
+.b2 span,.b2 b{position:relative}
+.up{color:var(--ok)}.dn{color:var(--bad)}
+#auth{max-width:340px;margin:18vh auto 0;padding:0 20px;text-align:center}
+#auth h1{color:var(--plum);font-size:26px;margin-bottom:6px}
+#auth .pri{width:100%}
+dialog{border:0;border-radius:16px;padding:18px;width:min(92vw,420px);color:var(--ink)}
+dialog::backdrop{background:rgba(58,24,48,.45)}
+.dbtn{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+#toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:20px;font-size:14px;z-index:9}
+</style>
+</head>
+<body>
+<div id="auth" hidden></div>
+<div id="app" hidden>
+  <header><h1>Punto de venta</h1><button id="st" class="lnk"></button></header>
+  <main id="main"></main>
+  <div id="cart" hidden></div>
+  <nav>
+    <button data-t="vender">Vender</button><button data-t="dia">Día</button>
+    <button data-t="prod">Productos</button><button data-t="rep">Reportes</button>
+  </nav>
+</div>
+<dialog id="dlg"></dialog>
+<div id="toast" hidden></div>
+<script>
+const $=id=>document.getElementById(id),LS=localStorage,SS=sessionStorage;
+const J=(k,d)=>{try{return JSON.parse(LS[k])||d}catch{return d}};
+const ymd=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
+const td=()=>ymd(new Date());
+let D=J('pos_d',{p:[],v:[]}),Q=J('pos_q',[]),URL_=LS.pos_url||'',PIN=SS.pos_pin||'';
+let cart=[],edit=null,tab='vender',syncing=false,err='',qs='',ps='',dd=td();
+let rep={m:'d',d:td(),mo:td().slice(0,7)};
+const save=()=>{LS.pos_d=JSON.stringify(D);LS.pos_q=JSON.stringify(Q)};
+const m$=n=>'$'+(+n||0).toLocaleString('es-MX',{maximumFractionDigits:2});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const addD=(d,n)=>{const x=new Date(d+'T12:00:00');x.setDate(x.getDate()+n);return ymd(x)};
+const addM=(mo,n)=>{const[y,m]=mo.split('-').map(Number);return ymd(new Date(y,m-1+n,1)).slice(0,7)};
+function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,1800)}
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function post(u,b){const r=await fetch(u,{method:'POST',body:JSON.stringify(b)});const j=await r.json();if(!j.ok)throw new Error(j.error||'Error');return j.data}
+
+/* ---------- acceso con PIN ---------- */
+function authView(){
+  const setup=!URL_||!LS.pos_h;
+  $('app').hidden=true;$('auth').hidden=false;
+  $('auth').innerHTML='<h1>Punto de venta</h1>'+(setup
+    ?'<p>Conecta la app con tu hoja de Google.</p><input id="au" placeholder="URL de la aplicación web" value="'+esc(URL_)+'"><input id="ap" type="password" inputmode="numeric" placeholder="PIN">'
+    :'<p>Ingresa tu PIN</p><input id="ap" type="password" inputmode="numeric" placeholder="PIN">')
+    +'<button class="pri" id="ab">'+(setup?'Conectar':'Entrar')+'</button><p class="err" id="ae"></p>';
+  $('ab').onclick=async()=>{
+    const p=$('ap').value.trim();if(!p)return;
+    if(setup){
+      const u=$('au').value.trim();$('ae').textContent='Conectando…';
+      try{D=await post(u,{pin:p,ops:[]});URL_=u;LS.pos_url=u;LS.pos_h=await sha(p);Q=[];save();enter(p)}
+      catch(e){$('ae').textContent='No se pudo conectar: '+e.message}
+    }else if(await sha(p)===LS.pos_h)enter(p);
+    else $('ae').textContent='PIN incorrecto';
+  };
+}
+function enter(p){PIN=p;SS.pos_pin=p;SS.pos_ok=1;$('auth').hidden=true;$('app').hidden=false;render();sync()}
+
+/* ---------- datos y sincronización ---------- */
+function apply(o){
+  const up=(a,x)=>{const i=a.findIndex(y=>y.id==x.id);i<0?a.push(x):a[i]=x};
+  if(o.t=='sp')up(D.p,o.d);
+  if(o.t=='dp')D.p=D.p.filter(x=>x.id!=o.id);
+  if(o.t=='ss')up(D.v,o.d);
+  if(o.t=='ds')D.v=D.v.filter(x=>x.id!=o.id);
+}
+function op(o){apply(o);Q.push(o);save();sync()}
+async function sync(){
+  if(syncing||!URL_||!PIN)return;
+  syncing=true;err='';st();
+  const sent=Q.slice();
+  try{
+    const data=await post(URL_,{pin:PIN,ops:sent});
+    Q=Q.slice(sent.length);D=data;Q.forEach(apply);save();
+  }catch(e){err=navigator.onLine?e.message:'Sin conexión'}
+  syncing=false;st();
+  if(!/INPUT|SELECT/.test(document.activeElement.tagName))render();
+}
+function st(){
+  $('st').textContent=syncing?'Sincronizando…':err?'⚠ '+err+' · reintentar':Q.length?Q.length+' por enviar · enviar':'Sincronizado';
+}
+$('st').onclick=sync;
+addEventListener('online',sync);
+setInterval(()=>{if(Q.length)sync()},30000);
+
+/* ---------- utilidades de reportes ---------- */
+function agg(vs){
+  let t=0,k=0,u=0;
+  vs.forEach(v=>{t+=+v.total;k+=+v.costo;v.items.forEach(i=>u+=i.q)});
+  return{t,k,g:t-k,n:vs.length,u};
+}
+
+/* ---------- navegación ---------- */
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render();scrollTo(0,0)});
+function render(){
+  st();
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==tab));
+  $('main').style.paddingBottom=tab=='vender'?'40vh':'';
+  ({vender:vVender,dia:vDia,prod:vProd,rep:vRep})[tab]();
+  if(tab!='vender')$('cart').hidden=true;
+}
+
+/* ---------- vender ---------- */
+function vVender(){
+  $('main').innerHTML=(edit?'<div class="ban"><span>Editando la venta de las '+esc(edit.hora)+' del '+esc(edit.fecha)+'</span><button class="lnk" id="ce">Cancelar edición</button></div>':'')
+    +'<input id="q" type="search" placeholder="Buscar producto por nombre" value="'+esc(qs)+'"><div id="res"></div>';
+  $('q').oninput=e=>{qs=e.target.value;res()};
+  if(edit)$('ce').onclick=()=>{edit=null;cart=[];render()};
+  res();cartUI();
+}
+function res(){
+  const k=norm(qs);
+  const l=D.p.filter(p=>norm(p.nombre+' '+p.categoria).includes(k)).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')).slice(0,40);
+  $('res').innerHTML=l.length?l.map(p=>'<button class="row" data-i="'+esc(p.id)+'"><span><b>'+esc(p.nombre)+'</b><small>'+esc(p.categoria)+'</small></span><span class="pr">'+m$(p.precio)+'</span></button>').join('')
+    :'<p class="emp">'+(D.p.length?'Sin resultados.':'Aún no hay productos. Agrégalos en la pestaña Productos.')+'</p>';
+  $('res').querySelectorAll('.row').forEach(b=>b.onclick=()=>add(b.dataset.i));
+}
+function add(id){
+  const p=D.p.find(x=>x.id==id);if(!p)return;
+  const l=cart.find(x=>x.i==id);
+  if(l)l.q++;else cart.push({i:p.id,n:p.nombre,c:p.categoria,p:+p.precio,k:+p.costo,q:1});
+  cartUI();
+}
+function cartUI(){
+  const c=$('cart');
+  if(tab!='vender'||!cart.length){c.hidden=true;return}
+  const t=cart.reduce((s,l)=>s+l.p*l.q,0),n=cart.reduce((s,l)=>s+l.q,0);
+  c.hidden=false;
+  c.innerHTML='<div class="lines">'+cart.map((l,i)=>'<div class="ln"><span>'+esc(l.n)+'<small>'+m$(l.p)+'</small></span><span class="qt"><button data-a="-" data-i="'+i+'">−</button><b>'+l.q+'</b><button data-a="+" data-i="'+i+'">+</button></span><span class="lt">'+m$(l.p*l.q)+'</span></div>').join('')
+    +'</div><div class="tot"><span>'+n+' pieza'+(n>1?'s':'')+'</span><b>'+m$(t)+'</b><button class="pri" id="pay">'+(edit?'Guardar cambios':'Cobrar')+'</button></div>';
+  c.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;cart[i].q+=b.dataset.a=='+'?1:-1;
+    if(cart[i].q<1)cart.splice(i,1);cartUI();
+  });
+  $('pay').onclick=pay;
+}
+function pay(){
+  const v={
+    id:edit?edit.id:uid('v'),fecha:edit?edit.fecha:td(),hora:edit?edit.hora:new Date().toTimeString().slice(0,5),
+    total:cart.reduce((s,l)=>s+l.p*l.q,0),costo:cart.reduce((s,l)=>s+l.k*l.q,0),items:cart.map(l=>({...l}))
+  };
+  op({t:'ss',d:v});
+  if(edit){tab='dia';dd=v.fecha}
+  toast(edit?'Cambios guardados':'Venta guardada');
+  cart=[];edit=null;qs='';render();
+}
+
+/* ---------- día y corte de caja ---------- */
+function vDia(){
+  const vs=D.v.filter(v=>v.fecha==dd).sort((a,b)=>String(b.hora).localeCompare(String(a.hora))),a=agg(vs);
+  const c=J('pos_c',{})[dd]||{};
+  $('main').innerHTML='<input type="date" id="dd" value="'+dd+'">'
+    +'<div class="cards"><div class="card"><small>Vendido</small><b>'+m$(a.t)+'</b></div><div class="card"><small>Ganancia</small><b>'+m$(a.g)+'</b></div><div class="card"><small>Ventas</small><b>'+a.n+'</b></div></div>'
+    +'<div class="card"><b>Corte de caja</b><label>Fondo inicial<input id="cf" type="number" inputmode="decimal" value="'+(c.f??'')+'"></label><label>Efectivo contado<input id="cc" type="number" inputmode="decimal" value="'+(c.c??'')+'"></label><div id="cr"></div></div>'
+    +'<h2>Ventas del día</h2>'
+    +(vs.length?vs.map(v=>'<div class="card"><div class="sale"><b>'+esc(v.hora)+'</b><b>'+m$(v.total)+'</b></div><p>'+esc(v.items.map(i=>i.q+'× '+i.n).join(', '))+'</p><div class="acts"><button data-e="'+esc(v.id)+'">Editar</button><button data-x="'+esc(v.id)+'">Eliminar</button></div></div>').join(''):'<p class="emp">No hay ventas este día.</p>');
+  $('dd').onchange=e=>{dd=e.target.value||td();render()};
+  const cx=()=>{
+    const all=J('pos_c',{}),f=$('cf').value,k=$('cc').value;
+    all[dd]={f,c:k};LS.pos_c=JSON.stringify(all);
+    const esp=(+f||0)+a.t;
+    $('cr').innerHTML='Esperado en caja: <b>'+m$(esp)+'</b>'+(k!==''?'<br>Diferencia: <b class="'+(+k-esp<0?'dn':'up')+'">'+m$(+k-esp)+'</b>':'');
+  };
+  $('cf').oninput=$('cc').oninput=cx;cx();
+  document.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{
+    edit=D.v.find(v=>v.id==b.dataset.e);cart=edit.items.map(i=>({...i}));tab='vender';qs='';render();
+  });
+  document.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{
+    if(confirm('¿Eliminar esta venta?')){op({t:'ds',id:b.dataset.x});render()}
+  });
+}
+
+/* ---------- productos ---------- */
+function vProd(){
+  $('main').innerHTML='<div class="bar"><input id="pq" type="search" placeholder="Buscar producto" value="'+esc(ps)+'"><button class="pri" id="pn">Nuevo</button></div><div id="pl"></div>';
+  $('pq').oninput=e=>{ps=e.target.value;pl()};
+  $('pn').onclick=()=>dlg();
+  pl();
+}
+function pl(){
+  const k=norm(ps);
+  const l=D.p.filter(p=>norm(p.nombre+' '+p.categoria).includes(k)).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+  $('pl').innerHTML=l.length?l.map(p=>'<button class="row" data-i="'+esc(p.id)+'"><span><b>'+esc(p.nombre)+'</b><small>'+esc(p.categoria)+' · costo '+m$(p.costo)+'</small></span><span class="pr">'+m$(p.precio)+'</span></button>').join(''):'<p class="emp">'+(D.p.length?'Sin resultados.':'Toca “Nuevo” para agregar tu primer producto.')+'</p>';
+  $('pl').querySelectorAll('.row').forEach(b=>b.onclick=()=>dlg(D.p.find(p=>p.id==b.dataset.i)));
+}
+function dlg(p){
+  const cats=[...new Set(D.p.map(x=>x.categoria))].sort();
+  $('dlg').innerHTML='<h2 style="margin-top:0">'+(p?'Editar producto':'Nuevo producto')+'</h2>'
+    +'<label>Nombre<input id="fn" value="'+esc(p?.nombre)+'"></label>'
+    +'<label>Categoría<input id="fc" list="cats" value="'+esc(p?.categoria)+'"></label><datalist id="cats">'+cats.map(c=>'<option value="'+esc(c)+'">').join('')+'</datalist>'
+    +'<label>Precio de venta<input id="fp" type="number" inputmode="decimal" value="'+esc(p?.precio)+'"></label>'
+    +'<label>Costo<input id="fk" type="number" inputmode="decimal" value="'+esc(p?.costo)+'"></label>'
+    +'<p class="err" id="fe"></p><div class="dbtn">'+(p?'<button class="sec" id="fd">Eliminar</button>':'')+'<button class="sec" id="fx">Cancelar</button><button class="pri" id="fs">Guardar</button></div>';
+  $('dlg').showModal();
+  $('fx').onclick=()=>$('dlg').close();
+  $('fs').onclick=()=>{
+    const n=$('fn').value.trim(),pr=parseFloat($('fp').value);
+    if(!n||!(pr>=0)){$('fe').textContent='Escribe el nombre y el precio.';return}
+    op({t:'sp',d:{id:p?p.id:uid('p'),nombre:n,categoria:$('fc').value.trim()||'Sin categoría',precio:pr,costo:parseFloat($('fk').value)||0}});
+    $('dlg').close();render();
+  };
+  if(p)$('fd').onclick=()=>{
+    if(confirm('¿Eliminar este producto? Las ventas anteriores no cambian.')){op({t:'dp',id:p.id});$('dlg').close();render()}
+  };
+}
+
+/* ---------- reportes ---------- */
+function vRep(){
+  const dia=rep.m=='d',key=dia?rep.d:rep.mo,pre=dia?addD(rep.d,-1):addM(rep.mo,-1);
+  const f=k=>D.v.filter(v=>dia?v.fecha==k:String(v.fecha).startsWith(k));
+  const cur=f(key),a=agg(cur),b=agg(f(pre));
+  const dl=(x,y)=>y?'<span class="'+(x>=y?'up':'dn')+'">'+(x>=y?'+':'')+Math.round((x-y)/y*100)+'%</span>':'—';
+  const cats={},prods={},days={};
+  cur.forEach(v=>{
+    const d=days[v.fecha]||(days[v.fecha]={t:0,k:0});d.t+=+v.total;d.k+=+v.costo;
+    v.items.forEach(i=>{
+      cats[i.c]=(cats[i.c]||0)+i.p*i.q;
+      const p=prods[i.n]||(prods[i.n]={q:0,t:0});p.q+=i.q;p.t+=i.p*i.q;
+    });
+  });
+  const cl=Object.entries(cats).sort((x,y)=>y[1]-x[1]),mx=cl.length?cl[0][1]:1;
+  const pl=Object.entries(prods).sort((x,y)=>y[1].q-x[1].q).slice(0,10);
+  $('main').innerHTML='<div class="seg"><button data-m="d" class="'+(dia?'on':'')+'">Día</button><button data-m="m" class="'+(dia?'':'on')+'">Mes</button></div>'
+    +(dia?'<input type="date" id="rd" value="'+rep.d+'">':'<input type="month" id="rm" value="'+rep.mo+'">')
+    +'<div class="card"><table><tr><th></th><th>'+key+'</th><th>'+pre+'</th><th>Cambio</th></tr>'
+    +'<tr><td>Vendido</td><td>'+m$(a.t)+'</td><td>'+m$(b.t)+'</td><td>'+dl(a.t,b.t)+'</td></tr>'
+    +'<tr><td>Ganancia</td><td>'+m$(a.g)+'</td><td>'+m$(b.g)+'</td><td>'+dl(a.g,b.g)+'</td></tr>'
+    +'<tr><td>Ventas</td><td>'+a.n+'</td><td>'+b.n+'</td><td>'+dl(a.n,b.n)+'</td></tr>'
+    +'<tr><td>Piezas</td><td>'+a.u+'</td><td>'+b.u+'</td><td>'+dl(a.u,b.u)+'</td></tr></table></div>'
+    +'<h2>Ventas por categoría</h2>'+(cl.length?cl.map(([c,v])=>'<div class="b2"><i style="width:'+Math.round(v/mx*100)+'%"></i><span>'+esc(c)+'</span><b>'+m$(v)+'</b></div>').join(''):'<p class="emp">Sin ventas en este periodo.</p>')
+    +'<h2>Más vendidos</h2>'+(pl.length?pl.map(([n,p])=>'<div class="b2"><i style="width:0"></i><span>'+p.q+'× '+esc(n)+'</span><b>'+m$(p.t)+'</b></div>').join(''):'<p class="emp">Sin ventas en este periodo.</p>')
+    +(dia?'':'<h2>Por día</h2><div class="card"><table><tr><th>Día</th><th>Vendido</th><th>Ganancia</th></tr>'+Object.keys(days).sort().reverse().map(d=>'<tr><td>'+d.slice(8)+'</td><td>'+m$(days[d].t)+'</td><td>'+m$(days[d].t-days[d].k)+'</td></tr>').join('')+'</table></div>');
+  document.querySelectorAll('.seg button').forEach(x=>x.onclick=()=>{rep.m=x.dataset.m;render()});
+  if($('rd'))$('rd').onchange=e=>{rep.d=e.target.value||td();render()};
+  if($('rm'))$('rm').onchange=e=>{rep.mo=e.target.value||td().slice(0,7);render()};
+}
+
+/* ---------- inicio ---------- */
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+if(SS.pos_ok&&URL_&&PIN)enter(PIN);else authView();
+</script>
+</body>
+</html>
