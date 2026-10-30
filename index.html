@@ -86,7 +86,7 @@ const $=id=>document.getElementById(id),LS=localStorage,SS=sessionStorage;
 const J=(k,d)=>{try{return JSON.parse(LS[k])||d}catch{return d}};
 const ymd=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
 const td=()=>ymd(new Date());
-let D=J('pos_d',{p:[],v:[]}),Q=J('pos_q',[]),URL_=LS.pos_url||'',PIN=SS.pos_pin||'';
+let D=fix(J('pos_d',{p:[],v:[]})),Q=J('pos_q',[]),URL_=LS.pos_url||'',PIN=SS.pos_pin||'';
 let cart=[],edit=null,tab='vender',syncing=false,err='',qs='',ps='',dd=td();
 let rep={m:'d',d:td(),mo:td().slice(0,7)};
 const save=()=>{LS.pos_d=JSON.stringify(D);LS.pos_q=JSON.stringify(Q)};
@@ -98,7 +98,9 @@ const addD=(d,n)=>{const x=new Date(d+'T12:00:00');x.setDate(x.getDate()+n);retu
 const addM=(mo,n)=>{const[y,m]=mo.split('-').map(Number);return ymd(new Date(y,m-1+n,1)).slice(0,7)};
 function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,1800)}
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-async function post(u,b){const r=await fetch(u,{method:'POST',body:JSON.stringify(b)});const j=await r.json();if(!j.ok)throw new Error(j.error||'Error');return j.data}
+async function post(u,b){const r=await fetch(u,{method:'POST',body:JSON.stringify(b)});const j=await r.json();if(!j.ok)throw new Error(j.error||'Error');return fix(j.data)}
+// Protección extra: si una fecha llega como fecha completa (ISO), se convierte a AAAA-MM-DD
+function fix(d){d.v.forEach(v=>{v.fecha=String(v.fecha);if(v.fecha.includes('T'))v.fecha=ymd(new Date(v.fecha));v.hora=String(v.hora)});return d}
 
 /* ---------- acceso con PIN ---------- */
 function authView(){
